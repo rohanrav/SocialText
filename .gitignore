@@ -1,0 +1,83 @@
+# Server
+server/lib-cov
+server/*.seed
+server/*.log
+server/*.csv
+server/*.dat
+server/*.out
+server/*.pid
+server/*.gz
+server/*.swp
+
+server/pids
+server/logs
+server/results
+server/tmp
+
+# Build
+server/public/css/main.css
+
+# Coverage reports
+server/coverage
+
+# API keys and secrets
+server/.env
+
+# Dependency directory
+server/node_modules
+server/bower_components
+
+# Editors
+server/.idea
+server/*.iml
+
+# OS metadata
+server/.DS_Store
+server/Thumbs.db
+
+# Ignore built ts files
+server/dist
+
+# ignore yarn.lock
+server/yarn.lock
+
+# ignore redis backup file
+server/dump.rdb
+
+# Client
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+web/node_modules
+web/.pnp
+web/.pnp.js
+
+# testing
+web/coverage
+
+# next.js
+web/.next/
+web/out/
+
+# production
+web/build
+
+# misc
+web/.DS_Store
+web/*.pem
+
+# debug
+web/npm-debug.log*
+web/yarn-debug.log*
+web/yarn-error.log*
+web/.pnpm-debug.log*
+
+# local env files
+web/.env*.local
+
+# vercel
+web/.vercel
+
+# typescript
+web/*.tsbuildinfo
+web/next-env.d.ts
