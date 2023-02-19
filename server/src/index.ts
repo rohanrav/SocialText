@@ -31,6 +31,7 @@ const main = async () => {
     database: "lireddit",
     entities: [User, Post],
     logging: !__prod__,
+    synchronize: true,
   });
   await AppDataSource.initialize();
 
