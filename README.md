@@ -2,7 +2,7 @@
 
 SocialText social media platform that allows users to post text anonymously. Users can upvote or downvote posts they like or dislike.
 
-The site is currently running at the link: https://socialtext.site/
+The site is currently running at the link: [SocialText](https://socialtext.site/)
 
 This application was built with: TypeScript, React, GraphQL, Node, PostgreSQL, TypeORM, Redis, NextJS, and React-Bootstrap.
 
