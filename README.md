@@ -14,4 +14,4 @@ Here are some screenshots of the application:
 
 ### Home Page
 
-![](https://github.com/rohanrav/ImageRepo/blob/master/screenshots/Home.png)
+![](https://github.com/rohanrav/SocialText/blob/master/images/Home.png)
