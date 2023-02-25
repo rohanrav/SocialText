@@ -1,41 +1,37 @@
-import "reflect-metadata";
 import "dotenv-safe/config";
-import { COOKIE_NAME, __prod__ } from "./constants";
 import express from "express";
+import "reflect-metadata";
+import { COOKIE_NAME, __prod__ } from "./constants";
 
-import { ApolloServer } from "apollo-server-express";
 import { ApolloServerPluginLandingPageLocalDefault } from "apollo-server-core";
+import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { HelloResolver, PostResolver, UserResolver } from "./resolvers";
 
-import Redis from "ioredis";
-import session from "express-session";
 import connectRedis from "connect-redis";
-import { TContext } from "./types";
 import cors from "cors";
-import { DataSource } from "typeorm";
-import { User } from "./entities/User";
-import { Post } from "./entities/Post";
+import session from "express-session";
+import Redis from "ioredis";
 import path from "path";
+import { DataSource } from "typeorm";
+import { Post } from "./entities/Post";
 import { Updoot } from "./entities/Updoot";
-import { createLoader } from "./utils/createUserLoader";
+import { User } from "./entities/User";
+import { TContext } from "./types";
 import { createUpdootLoader } from "./utils/createUpdootLoader";
+import { createLoader } from "./utils/createUserLoader";
 
 const AppDataSource = new DataSource({
   type: "postgres",
   url: process.env.DATABASE_URL,
   entities: [User, Post, Updoot],
   logging: !__prod__,
-  // synchronize: true,
+  synchronize: true,
   migrations: [path.join(__dirname, "./migrations/*")],
 });
 
 const main = async () => {
   await AppDataSource.initialize();
-  // await AppDataSource.runMigrations();
-
-  // await Post.delete({});
-
   const app = express();
 
   const RedisStore = connectRedis(session);
