@@ -38,7 +38,7 @@ const Index: React.FC = () => {
   if (error) {
     toast({
       title: "Error!",
-      description: error.graphQLErrors[0].message,
+      description: error.graphQLErrors[0]?.message,
       status: "error",
       duration: 500,
       isClosable: true,
@@ -61,7 +61,7 @@ const Index: React.FC = () => {
         {!data && fetching ? (
           <Spinner animation="border" role="status" />
         ) : (
-          <Row xs={1} md={2} lg={4} className="g-4">
+          <Row xs={1} md={2} className="g-4">
             {data!.posts.posts.map((p) => {
               if (!p) return null;
               return (
