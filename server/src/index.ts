@@ -1,5 +1,5 @@
 import "reflect-metadata";
-
+import "dotenv-safe/config";
 import { COOKIE_NAME, __prod__ } from "./constants";
 import express from "express";
 
@@ -16,33 +16,35 @@ import cors from "cors";
 import { DataSource } from "typeorm";
 import { User } from "./entities/User";
 import { Post } from "./entities/Post";
+import path from "path";
+import { Updoot } from "./entities/Updoot";
+import { createLoader } from "./utils/createUserLoader";
+import { createUpdootLoader } from "./utils/createUpdootLoader";
 
-declare module "express-session" {
-  interface SessionData {
-    userId: number;
-  }
-}
+const AppDataSource = new DataSource({
+  type: "postgres",
+  url: process.env.DATABASE_URL,
+  entities: [User, Post, Updoot],
+  logging: !__prod__,
+  // synchronize: true,
+  migrations: [path.join(__dirname, "./migrations/*")],
+});
 
 const main = async () => {
-  const AppDataSource = new DataSource({
-    type: "postgres",
-    username: "postgres",
-    password: "password",
-    database: "lireddit",
-    entities: [User, Post],
-    logging: !__prod__,
-    synchronize: true,
-  });
   await AppDataSource.initialize();
+  // await AppDataSource.runMigrations();
+
+  // await Post.delete({});
 
   const app = express();
 
   const RedisStore = connectRedis(session);
-  const redis = new Redis();
+  const redis = new Redis(process.env.REDIS_URL);
 
+  app.set("trust proxy", 1);
   app.use(
     cors({
-      origin: "http://localhost:3000",
+      origin: process.env.CORS_ORIGIN,
       credentials: true,
     })
   );
@@ -56,8 +58,9 @@ const main = async () => {
         httpOnly: true,
         secure: __prod__,
         sameSite: "lax",
+        domain: __prod__ ? ".socialtext.site" : undefined,
       },
-      secret: "keyboard cat",
+      secret: process.env.SESSION_SECRET,
       resave: false,
       saveUninitialized: false,
     })
@@ -73,6 +76,8 @@ const main = async () => {
       res,
       redis,
       dataSource: AppDataSource,
+      dataLoader: createLoader(),
+      updootLoader: createUpdootLoader(),
     }),
     csrfPrevention: true,
     cache: "bounded",
@@ -84,9 +89,11 @@ const main = async () => {
     cors: false,
   });
 
-  app.listen(4000, () => {
-    console.log("server started on localhost:4000");
+  app.listen(parseInt(process.env.PORT), () => {
+    console.log(`server started on localhost:${process.env.PORT}`);
   });
 };
 
 main().catch((e) => console.error(e));
+
+export default AppDataSource;

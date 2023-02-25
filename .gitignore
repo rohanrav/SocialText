@@ -81,3 +81,8 @@ web/.vercel
 # typescript
 web/*.tsbuildinfo
 web/next-env.d.ts
+
+server/.env
+server/.env.production
+dump.rdb
+.DS_Store

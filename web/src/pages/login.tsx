@@ -1,19 +1,20 @@
-import React from "react";
-import { Formik, Form } from "formik";
-import { Button, Box, Flex, Link } from "@chakra-ui/react";
-import { InputField, Wrapper } from "../components";
-import { toErrorMap } from "../utils/toErrorMap";
-import { useLoginMutation } from "../generated/graphql";
-import { useRouter } from "next/router";
-import { createUrqlClient } from "../utils/createUrqlClient";
+import { Flex } from "@chakra-ui/react";
+import { Form, Formik } from "formik";
 import { withUrqlClient } from "next-urql";
-import NextLink from "next/link";
+import { useRouter } from "next/router";
+import React from "react";
+import { InputField, Wrapper } from "../components";
+import { useLoginMutation } from "../generated/graphql";
+import { createUrqlClient } from "../utils/createUrqlClient";
+import { toErrorMap } from "../utils/toErrorMap";
+import { Button } from "react-bootstrap";
+import { Layout } from "../components/Layout";
 
 const Login: React.FC = () => {
   const router = useRouter();
   const [_, login] = useLoginMutation();
   return (
-    <Wrapper variant="small">
+    <Layout variant="small">
       <Formik
         initialValues={{ usernameOrEmail: "", password: "" }}
         onSubmit={async (values, { setErrors }) => {
@@ -21,7 +22,11 @@ const Login: React.FC = () => {
           if (response.data?.login?.errors) {
             setErrors(toErrorMap(response.data.login.errors));
           } else if (response.data?.login?.user) {
-            router.push("/");
+            if (typeof router.query.next === "string") {
+              router.push(router.query.next);
+            } else {
+              router.push("/");
+            }
           }
         }}
       >
@@ -29,32 +34,32 @@ const Login: React.FC = () => {
           <Form>
             <InputField
               name="usernameOrEmail"
-              placeholder="username or email"
+              placeholder="Username or Email"
               label="Username or Email"
             />
             <InputField
               name="password"
-              placeholder="password"
+              placeholder="Password"
               label="Password"
               type="password"
             />
             <Flex alignItems="center" justifyContent="space-between">
               <Button
                 type="submit"
-                mt={4}
-                colorScheme="teal"
-                isLoading={isSubmitting}
+                variant="primary"
+                disabled={isSubmitting}
+                style={{ marginTop: "8px", width: "100%" }}
               >
                 Login
               </Button>
-              <NextLink href="/forgot-password">
+              {/* <NextLink href="/forgot-password">
                 <Link>forgot password?</Link>
-              </NextLink>
+              </NextLink> */}
             </Flex>
           </Form>
         )}
       </Formik>
-    </Wrapper>
+    </Layout>
   );
 };
 

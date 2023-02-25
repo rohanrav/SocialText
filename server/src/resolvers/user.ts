@@ -7,6 +7,8 @@ import {
   Field,
   ObjectType,
   Query,
+  FieldResolver,
+  Root,
 } from "type-graphql";
 import { TContext } from "src/types";
 import argon from "argon2";
@@ -34,8 +36,16 @@ class UserResponse {
   user?: User;
 }
 
-@Resolver()
+@Resolver(User)
 export class UserResolver {
+  @FieldResolver(() => String)
+  email(@Root() user: User, @Ctx() { req }: TContext) {
+    if (req.session.userId === user.id) {
+      return user.email;
+    }
+    return "";
+  }
+
   @Query(() => User, { nullable: true })
   async currentUser(@Ctx() { req }: TContext): Promise<User | null> {
     if (!req.session.userId) {
@@ -71,7 +81,6 @@ export class UserResolver {
 
       user = result.raw[0];
     } catch (error) {
-      console.log("error", error);
       if (error.detail.includes("already exists")) {
         return {
           errors: [
@@ -123,6 +132,8 @@ export class UserResolver {
     }
 
     req.session.userId = user.id;
+    await req.session.save();
+
     return { user };
   }
 
